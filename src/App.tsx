@@ -10,26 +10,36 @@ function AppContent() {
   const { user, loading } = useAuth();
   const [currentPage, setCurrentPage] = React.useState<'process' | 'profile'>('process');
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
-      </div>
-    );
-  }
+  const LoadingSpinner = () => (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
+    </div>
+  )
 
-  if (!user) {
-    return <AuthForm />;
+  const renderContent = () => {
+    if (loading) {
+      return <LoadingSpinner />;
+    }
+
+    if (!user) {
+      return <AuthForm />;
+    }
+
+    return (
+      <div className="min-h-screen flex bg-gray-100">
+        <Navigation currentPage='process' onPageChange={setCurrentPage} />
+        <main className='flex-1 p-8'>
+          {currentPage === 'process' ? <ImageProcessor /> : <Profile />}
+        </main>
+      </div>
+    )
   }
 
   return (
-    <div className="min-h-screen flex bg-gray-100">
-      <Navigation currentPage={currentPage} onPageChange={setCurrentPage} />
-      <main className="flex-1 p-8">
-        {currentPage === 'process' ? <ImageProcessor /> : <Profile />}
-      </main>
+    <>
+      {renderContent()}
       <Toaster position="bottom-right" />
-    </div>
+    </>
   );
 }
 

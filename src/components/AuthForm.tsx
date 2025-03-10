@@ -9,13 +9,16 @@ const authSchema = z.object({
 });
 
 export function AuthForm() {
-  const [isLogin, setIsLogin] = useState(true);
+  
+  // 状态管理
+  const [isLogin, setIsLogin] = useState(true); // 控制当前是登录还是注册模式
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { signIn, signUp } = useAuth();
 
+  // 表单验证
   const validateForm = () => {
     try {
       authSchema.parse({ email, password });
@@ -35,6 +38,7 @@ export function AuthForm() {
     }
   };
 
+  // 提交表单
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -54,7 +58,8 @@ export function AuthForm() {
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'An error occurred';
-      if (errorMessage.includes('invalid_credentials')) {
+      console.error(errorMessage);
+      if (errorMessage.includes('Invalid login credentials')) {
         toast.error('Invalid email or password');
       } else if (errorMessage.includes('User already registered')) {
         toast.error('An account with this email already exists');
